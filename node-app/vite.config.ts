@@ -17,6 +17,13 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    host: '127.0.0.1' // for port forwarding to work in devcontainer
+    host: '127.0.0.1', // for port forwarding to work in devcontainer
+    proxy: {
+      '/api': {
+        target: 'http://py-api:8000', // Backend server
+        changeOrigin: true, // Ensure the request appears to come from the frontend server
+        // rewrite: (path) => path.replace(/^\/api/, ''), // Optional: Remove '/api' prefix
+      },
+    },
   },
 })
