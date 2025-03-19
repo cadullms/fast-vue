@@ -1,3 +1,4 @@
+import process from 'node:process'
 import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
@@ -20,7 +21,9 @@ export default defineConfig({
     host: '127.0.0.1', // for port forwarding to work in devcontainer
     proxy: {
       '/api': {
-        target: 'http://py-api:8000', // Backend server
+        // Set env var VITE_DEV_PROXY_URL to http://py-api:8000 when running in devcontainer.
+        // See run-dev.sh and run-dev-without-container.sh scripts
+        target: process.env.VITE_DEV_PROXY_URL ? process.env.VITE_DEV_PROXY_URL : 'http://localhost:8000', 
         changeOrigin: true, // Ensure the request appears to come from the frontend server
         // rewrite: (path) => path.replace(/^\/api/, ''), // Optional: Remove '/api' prefix
       },

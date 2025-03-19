@@ -32,6 +32,26 @@ Now you can work in both the fastapi and vue part, both with file watchers set u
 
 The vue app (node app) has a proxy set up (defined in [vite.config.ts](./node-app/vite.config.ts)), which forwards all requests that cannot be handled by the vue app's routing to `http://py-api:8000`, which is exactly where our fastapi app is listening in the `py-api` dev container. This way we can use the same relative paths to the api that can be used in the production container.
 
+## Local development without devcontainers
+
+If devcontainers are not an option this can still run for local dev. 
+
+> Prerequisites are that npm, Python and pip are installed and working. You may choose to use a virtual environment in Python. Eventually, the virtual env will be handled using poetry.
+
+1. Open the `py-api` folder in the IDE of your choice. 
+1. Open a terminal, start the backend:
+   ```sh
+   ./run-dev.sh
+   ```
+1. Open the `node-app` folder in another instance of the IDE of your choice.
+1. Open a terminal, start the frontend:
+   ```sh
+   ./run-dev-without-container.sh
+   ```
+The app should now start just as in the devcontainer case with a local dev proxy in the frontend pointing to our backend, only that now it is not using `http://py-api:8000` as in the container case, but it points to `http://localhost:8000`. The proxy in  [vite.config.ts](./node-app/vite.config.ts) reads an environment variable `VITE_DEV_PROXY_URL` that is set to the correct value in [run-dev.sh](./node-app/run-dev.sh) and [run-dev-without-container.sh](./node-app/run-dev-without-container.sh) accordingly.
+
+
+
 ## Production container
 
 The production container is built using the multi stage build [Dockerfile](./Dockerfile) in this repo. This Dockerfile contains one stage to build the node app, one for the fastapi app and a final (minimal) stage which produces the final container image. This final image gets the build results of both the fastapi and the vue app. During runtime, the container then starts a uvicorn server hosting the fastapi api implementation and serving the vue app as static files in the root path.
