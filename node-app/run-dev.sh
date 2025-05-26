@@ -1,1 +1,0 @@
-VITE_DEV_PROXY_URL=http://py-api:8000 npm run dev
